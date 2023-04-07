@@ -1,99 +1,144 @@
 import { Octokit, App } from "https://cdn.skypack.dev/octokit";
 
-const octokit = new Octokit({ 
-    auth: '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',
-  })
+const octokit = new Octokit({
+  auth: "",
+});
 
-
-// use HTTP GET to see repo issues
-async function requestIssues(name) {
-const requestIssues = await octokit.request("GET /repos/{owner}/{repo}/issues", {
-    owner: "fac27",
-    repo: name,
+// Get fac27 user data and append on page load
+async function getUser(username, getUser) {
+  getUser = await octokit.request("GET /users/{username}", {
+    username: username,
+    headers: {
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
   });
-
-const displayIssues = document.createElement("p");
-displayIssues.innerText = "Open issues: " + requestIssues.data[0].title;
-repoData.appendChild(displayIssues)
-
+  displayUser(username, getUser);
 }
 
-// List FAC27 repos
-const listOrgRepos = await octokit.request('GET /orgs/{org}/repos', {
-    org: 'fac27',
-    headers: {
-      'X-GitHub-Api-Version': '2022-11-28'
-    }
-  })
+function displayUser(username, getUser) {
+  const teamGrid = document.getElementById("team-grid");
+  const userDiv = document.createElement("div");
+  userDiv.setAttribute("id", username);
+  userDiv.style.width = "300px";
+  userDiv.innerText = getUser.data.login;
+  const userImg = document.createElement("img");
+  userImg.style.width = "inherit";
+  userImg.setAttribute("src", getUser.data.avatar_url);
+  userDiv.appendChild(userImg);
+  teamGrid.appendChild(userDiv);
+}
 
-const facRepoArr = []
-facRepoArr.push(listOrgRepos.data)
+getUser("simonryrie");
+getUser("carlthedev");
+getUser("camelPhonso");
+getUser("cameochoquer");
+getUser("FomasTreeman");
+getUser("hanleymark");
+getUser("malcolmwilson8");
+getUser("Taha-hassan-git");
+getUser("zakkariyaa");
+getUser("eliazzo");
+getUser("skarzcode");
+getUser("shahryarrr");
+getUser("ivanmauricio");
+getUser("sofer");
+// END
 
-const repoNames = facRepoArr[0].map((repo)=> repo.name);
+// Get Fac27 repos and display in dropdown
+const listOrgRepos = await octokit.request("GET /orgs/{org}/repos", {
+  org: "fac27",
+  headers: {
+    "X-GitHub-Api-Version": "2022-11-28",
+  },
+});
 
+const facRepoArr = [];
+facRepoArr.push(listOrgRepos.data);
+const repoNames = facRepoArr[0].map((repo) => repo.name);
 const facDropdown = document.getElementById("fac27-dropdown");
 repoNames.forEach((repo) => {
-    const option = document.createElement("option");
-    option.text = repo;
-    facDropdown.add(option);
-})
+  const option = document.createElement("option");
+  option.setAttribute("value", repo)
+  option.text = repo;
+  facDropdown.add(option);
+});
+// END
 
-const dropdownOptions = document.querySelectorAll("option")
-// console.log(dropdownOptions)
-
-const searchBtn = document.getElementById("search-repo");
-searchBtn.addEventListener("click", () => requestIssues("agency-website"));
-
-const repoData = document.querySelector("output");
+console.log(listOrgRepos)
 
 
 
-// List FAC27 public members
-await octokit.request('GET /orgs/{org}/members', {
-    org: 'fac27',
-    headers: {
-      'X-GitHub-Api-Version': '2022-11-28'
-    }
+
+// Get repo contributors
+// await octokit.request('GET /repos/{owner}/{repo}/contributors', {
+//   owner: 'fac27',
+//   repo: 'agency-website',
+//   headers: {
+//     'X-GitHub-Api-Version': '2022-11-28'
+//   }
+// })
+
+// Add event listener to dropdown on change
+facDropdown.addEventListener("change", function getChosenRepo() {
+  let chosenRepo = facDropdown.value
+  console.log(chosenRepo)
+
+  const card = document.getElementById("card");
+  const clonedCard = card.cloneNode(true);
+  clonedCard.classList.remove('display-none');
+  clonedCard.classList.add("stack-s")
+  const cardContainer = document.getElementById("repo-cards");
+  cardContainer.appendChild(clonedCard)
+ 
+  requestIssues(chosenRepo, clonedCard)
+
+  requestCommits(chosenRepo, clonedCard)
   })
-// console.log(fac27Members)
 
-//collaborators
-await octokit.request('GET /repos/{owner}/{repo}/collaborators', {
-    owner: 'fac27',
-    repo: 'agency-website',
-    headers: {
-      'X-GitHub-Api-Version': '2022-11-28'
-    }
+// Get repo issues and display on page
+async function requestIssues(name, location) {
+  const requestIssue = await octokit.request("GET /repos/{owner}/{repo}/issues", {
+    owner: "fac27",
+    repo: name,
   })
 
+  const requestIssueData = requestIssue.data
+  const issueHeading = document.createElement("h2");
+  issueHeading.innerText = "Open issues: ";
+  location.appendChild(issueHeading);
 
-// List commits
-
-const commits = await octokit.request('GET /repos/{owner}/{repo}/commits', {
-    owner: 'fac27',
-    repo: 'agency-website',
-    headers: {
-      'X-GitHub-Api-Version': '2022-11-28'
-    }
+  console.log(requestIssueData)
+  requestIssueData.forEach((issue) => {
+    const displayIssues = document.createElement("p");
+    displayIssues.innerText = issue.title;
+    location.appendChild(displayIssues);
   })
-//   console.log(commits.data[0].commit)
+}
+// END
+
+// Get commit history and append to page
+async function requestCommits(repo, location) {
+  const requestCommit = await octokit.request("GET /repos/{owner}/{repo}/commits", {
+  owner: "fac27",
+  repo: repo,
+  headers: {
+    "X-GitHub-Api-Version": "2022-11-28",
+  },
+  });
+  
+  const requestCommitData = requestCommit.data
+  const commitHeading = document.createElement("h2");
+  commitHeading.innerText = "Commit history: "
+  location.appendChild(commitHeading);
+
+  requestCommitData.forEach((item) => {
+    const displayCommits = document.createElement("p");
+    displayCommits.innerText = item.author.login + " : " + item.commit.message;
+    location.appendChild(displayCommits)
+    })
+  }
+// END
 
 
 
-
-// Traditional fetch methods
-const gitURL = 'https://api.github.com';
-
-fetch(gitURL)
-.then(response => response.json())
-// .then(data => console.log(data))
-
-// returns a list of possible URLS that you can access from gitHub
-
-
-const emails = "https://api.github.com/user/emails";
-
-// fetch(emails)
-// .then(response => response.json())
-// .then(data => console.log(data))
 
