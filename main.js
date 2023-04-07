@@ -1,7 +1,7 @@
 import { Octokit, App } from "https://cdn.skypack.dev/octokit";
 
 const octokit = new Octokit({
-  auth:,
+  auth: "",
 });
 
 // Get fac27 user data and append on page load
@@ -12,7 +12,6 @@ async function getUser(username, getUser) {
       "X-GitHub-Api-Version": "2022-11-28",
     },
   });
-
   displayUser(username, getUser);
 }
 
@@ -39,6 +38,8 @@ getUser("malcolmwilson8");
 getUser("Taha-hassan-git");
 getUser("zakkariyaa");
 getUser("eliazzo");
+getUser("skarzcode");
+getUser("shahryarrr");
 getUser("ivanmauricio");
 getUser("sofer");
 // END
@@ -63,75 +64,80 @@ repoNames.forEach((repo) => {
 });
 // END
 
-const repoData = document.querySelector("output");
+console.log(listOrgRepos)
 
-// Get repo issues and display on page
-async function requestIssues(name, requestIssue) {
-  requestIssue = await octokit.request("GET /repos/{owner}/{repo}/issues", {
-    owner: "fac27",
-    repo: name,
-  });
-}
 
-function displayIssues(requestIssue, cloneCard) {
-  const displayIssues = document.createElement("p");
-  // displayIssues.classList.add("stack-below");
-  displayIssues.innerText = "Open issues: " + requestIssue.data[0].title;
-  cloneCard.appendChild(displayIssues);
-}
-// END
+
 
 // Get repo contributors
+// await octokit.request('GET /repos/{owner}/{repo}/contributors', {
+//   owner: 'fac27',
+//   repo: 'agency-website',
+//   headers: {
+//     'X-GitHub-Api-Version': '2022-11-28'
+//   }
+// })
 
-await octokit.request('GET /repos/{owner}/{repo}/contributors', {
-  owner: 'fac27',
-  repo: 'agency-website',
-  headers: {
-    'X-GitHub-Api-Version': '2022-11-28'
-  }
-})
-
-// dropDown values
-
-const repoDropdown = document.getElementById("fac27-dropdown");
-
-repoDropdown.addEventListener("change", function getChosenRepo() {
-  let chosenRepo = repoDropdown.value
+// Add event listener to dropdown on change
+facDropdown.addEventListener("change", function getChosenRepo() {
+  let chosenRepo = facDropdown.value
   console.log(chosenRepo)
 
   const card = document.getElementById("card");
-  const cloneCard = card.cloneNode(true);
+  const clonedCard = card.cloneNode(true);
+  clonedCard.classList.remove('display-none');
+  clonedCard.classList.add("stack-s")
   const cardContainer = document.getElementById("repo-cards");
-  cardContainer.appendChild(cloneCard)
+  cardContainer.appendChild(clonedCard)
  
-  requestIssues(requestIssue, chosenRepo)
-  displayIssues(requestIssue, cloneCard)
-  requestCommits(chosenRepo)
+  requestIssues(chosenRepo, clonedCard)
+
+  requestCommits(chosenRepo, clonedCard)
   })
 
+// Get repo issues and display on page
+async function requestIssues(name, location) {
+  const requestIssue = await octokit.request("GET /repos/{owner}/{repo}/issues", {
+    owner: "fac27",
+    repo: name,
+  })
 
+  const requestIssueData = requestIssue.data
+  const issueHeading = document.createElement("h2");
+  issueHeading.innerText = "Open issues: ";
+  location.appendChild(issueHeading);
+
+  console.log(requestIssueData)
+  requestIssueData.forEach((issue) => {
+    const displayIssues = document.createElement("p");
+    displayIssues.innerText = issue.title;
+    location.appendChild(displayIssues);
+  })
+}
+// END
 
 // Get commit history and append to page
-async function requestCommits(repo, requestCommit) {
-  requestCommit = await octokit.request("GET /repos/{owner}/{repo}/commits", {
+async function requestCommits(repo, location) {
+  const requestCommit = await octokit.request("GET /repos/{owner}/{repo}/commits", {
   owner: "fac27",
   repo: repo,
   headers: {
     "X-GitHub-Api-Version": "2022-11-28",
   },
-});
-  console.log(requestCommit)
-  displayCommits(requestCommit)
-}
-
-function displayCommits(requestCommit) {
-  const displayCommits = document.createElement("p");
+  });
+  
   const requestCommitData = requestCommit.data
-  requestCommitData.filter((item) => {
-    displayCommits.innerText = "Commit history: \n" + item.author.login + " : " + item.commit.message;
-    repoData.appendChild(displayCommits)
+  const commitHeading = document.createElement("h2");
+  commitHeading.innerText = "Commit history: "
+  location.appendChild(commitHeading);
+
+  requestCommitData.forEach((item) => {
+    const displayCommits = document.createElement("p");
+    displayCommits.innerText = item.author.login + " : " + item.commit.message;
+    location.appendChild(displayCommits)
     })
-}
+  }
+// END
 
 
 
