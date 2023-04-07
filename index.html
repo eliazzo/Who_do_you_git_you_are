@@ -4,21 +4,30 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inconsolata&family=Nanum+Gothic&display=swap" rel="stylesheet">
     <title>Git_who?</title>
 </head>
 <body>
-    <h1>Discover FAC_27</h1>
-    <label>Members</label>
-    <ul id="fac27-members">
-        <li></li>
-    </ul>
+    <h1 class="center">Who do you *git* you are?</h1>
+    <h2 class="center">Fac27 Edit</h2>
+    <h2>Meet the team:</h2>
+    <div id="team-grid" class="flex flex-center">
+  
+    </div>
 
     
-    <label>Repositories</label>
+    <h2 class="text-m stack-m"> Fac27 Repositories</h2>
     <select name="repos" id="fac27-dropdown">
+        <!-- options dynamically inserted with js -->
     </select>
-    <button id="search-repo">search</button>
+    <!-- <button id="search-repo">search</button> -->
 
+    <div id="repo-cards">
+        <div id=card></div>
+    </div>
     <output>
         
     </output>
