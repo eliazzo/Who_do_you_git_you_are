@@ -1,7 +1,7 @@
 import { Octokit, App } from "https://cdn.skypack.dev/octokit";
 
 const octokit = new Octokit({
-  auth: "",
+  auth: ,
 });
 
 // Get fac27 user data and append on page load
@@ -64,7 +64,20 @@ repoNames.forEach((repo) => {
 });
 // END
 
-console.log(listOrgRepos)
+console.log(facRepoArr)
+const repoNameArr = [];
+listOrgRepos.data.forEach((repo) => {
+  repoNameArr.push(repo.name)
+})
+console.log(repoNameArr)
+
+const repoSizeArr = []
+listOrgRepos.data.forEach((repo) => {
+  repoSizeArr.push(repo.size);
+})
+console.log(repoSizeArr)
+
+
 
 
 
@@ -138,6 +151,32 @@ async function requestCommits(repo, location) {
     })
   }
 // END
+
+
+// Chart.js
+
+var xValues = repoNameArr;
+var yValues = repoSizeArr;
+var barColors = ["red", "green","blue","orange","brown"];
+
+
+new Chart("myChart", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  // options: {
+  //   legend: {display: false},
+  //   title: {
+  //     display: true,
+  //     text: "Largest repo"
+  //   }
+  // }
+});
 
 
 
