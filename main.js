@@ -159,6 +159,7 @@ async function requestCommits(repo, location) {
 // Get followers and push to array ro create chart
 
 const followerArr = [];
+const numberOfFollowersArr = [];
 
 async function followers(login){
   const getFollowers = await octokit.request('GET /users/{username}/followers', {
@@ -168,10 +169,14 @@ async function followers(login){
     }
   })
 
-  console.log(getFollowers.data)
+  // console.log(getFollowers.data)
+  // getFollowers.data.forEach(repo => console.log(repo.length))
 
   
   followerArr.push(getFollowers.data)
+  // console.log(followerArr)
+  
+  
 }
 
 
@@ -179,7 +184,11 @@ for(const login of fac27Logins){
 followers(login)
 }
 
-console.log(followerArr)
+followerArr.forEach(arr => numberOfFollowersArr.push(arr.length));
+console.log(numberOfFollowersArr)
+
+
+
 
 
 
@@ -237,6 +246,25 @@ new Chart("repoSizeSmall", {
   // }
 });
 
+console.log(repoNameArr)
+
+
+new Chart("follower-chart", {
+  type: "pie",
+  data: {
+    labels: repoNameArr,
+    datasets: [{
+      backgroundColor: barColors,
+      data: numberOfFollowersArr
+    }]
+  },
+  options: {
+    title: {
+      display: true,
+      text: "World Wide Wine Production"
+    }
+  }
+});
 
 
 
