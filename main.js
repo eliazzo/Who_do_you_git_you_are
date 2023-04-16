@@ -28,20 +28,24 @@ function displayUser(username, getUser) {
   teamGrid.appendChild(userDiv);
 }
 
-getUser("simonryrie");
-getUser("carlthedev");
-getUser("camelPhonso");
-getUser("cameochoquer");
-getUser("FomasTreeman");
-getUser("hanleymark");
-getUser("malcolmwilson8");
-getUser("Taha-hassan-git");
-getUser("zakkariyaa");
-getUser("eliazzo");
-getUser("skarzcode");
-getUser("shahryarrr");
-getUser("ivanmauricio");
-getUser("sofer");
+const fac27Logins = ["simonryrie", "carlthedev", "camelPhonso", "cameochoquer", "FomasTreeman", "hanleymark", "malcolmwilson8", "Taha-hassan-git", "zakkariyaa", "eliazzo", "skarzcode", "shahryarrr", "ivanmauricio", "sofer"]
+for(const login of fac27Logins){
+  getUser(login)
+}
+// getUser("simonryrie");
+// getUser("carlthedev");
+// getUser("camelPhonso");
+// getUser("cameochoquer");
+// getUser("FomasTreeman");
+// getUser("hanleymark");
+// getUser("malcolmwilson8");
+// getUser("Taha-hassan-git");
+// getUser("zakkariyaa");
+// getUser("eliazzo");
+// getUser("skarzcode");
+// getUser("shahryarrr");
+// getUser("ivanmauricio");
+// getUser("sofer");
 // END
 
 // Get Fac27 repos and display in dropdown
@@ -64,18 +68,18 @@ repoNames.forEach((repo) => {
 });
 // END
 
-console.log(facRepoArr)
+
 const repoNameArr = [];
 listOrgRepos.data.forEach((repo) => {
   repoNameArr.push(repo.name)
 })
-console.log(repoNameArr)
+
 
 const repoSizeArr = []
 listOrgRepos.data.forEach((repo) => {
   repoSizeArr.push(repo.size);
 })
-console.log(repoSizeArr)
+
 
 
 
@@ -152,19 +156,56 @@ async function requestCommits(repo, location) {
   }
 // END
 
+// Get followers and push to array ro create chart
+
+const followerArr = [];
+
+async function followers(login){
+  const getFollowers = await octokit.request('GET /users/{username}/followers', {
+    username: login,
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28'
+    }
+  })
+
+  console.log(getFollowers.data)
+
+  
+  followerArr.push(getFollowers.data)
+}
+
+
+for(const login of fac27Logins){
+followers(login)
+}
+
+console.log(followerArr)
+
+
+
+
 
 // Chart.js
 
-var xValues = repoNameArr;
-var yValues = repoSizeArr;
-var barColors = ["red", "green","blue","orange","brown"];
+const xValues = repoNameArr;
+const yValues = repoSizeArr
+// .filter(value => value <= 9000)
+const barColors = ["red", "green","blue","orange","brown"];
+
+// new Chart("repoSizeLarge", {
+//   type: "bar",
+//   data: {
+//     labels: 
+//   }
+// })
 
 
-new Chart("myChart", {
+new Chart("repoSizeSmall", {
   type: "bar",
   data: {
     labels: xValues,
     datasets: [{
+      label: "Repo sizes",
       backgroundColor: barColors,
       data: yValues
     }]
