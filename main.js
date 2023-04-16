@@ -187,27 +187,45 @@ console.log(followerArr)
 
 // Chart.js
 
-const xValues = repoNameArr;
-const yValues = repoSizeArr
-// .filter(value => value <= 9000)
+const xValuesSmall = repoNameArr.filter(name => name !== 'Agency-Website-A-C' && name !== 'AgencyWebsite' && name !== 'HereHear');
+const yValuesSmall = repoSizeArr.filter(value => value <= 9000)
+
+const xValuesLarge = ['Agency-Website-A-C', 'AgencyWebsite', 'HereHear'];
+const yValuesLarge = repoSizeArr.filter(value => value >= 9000);
+
+console.log(yValuesLarge)
+
 const barColors = ["red", "green","blue","orange","brown"];
 
-// new Chart("repoSizeLarge", {
-//   type: "bar",
-//   data: {
-//     labels: 
-//   }
-// })
+new Chart("repoSizeLarge", {
+  type: "bar",
+  data: {
+    labels: xValuesLarge,
+    datasets: [{
+      label: "Top 3 largest repos",
+      backgroundColor: barColors,
+      data: yValuesLarge
+    }]
+  },
+  // options: {
+  //   legend: {display: false},
+  //   title: {
+  //     display: true,
+  //     text: "Largest repo"
+  //   }
+  // }
+});
+
 
 
 new Chart("repoSizeSmall", {
   type: "bar",
   data: {
-    labels: xValues,
+    labels: xValuesSmall,
     datasets: [{
       label: "Repo sizes",
       backgroundColor: barColors,
-      data: yValues
+      data: yValuesSmall
     }]
   },
   // options: {
