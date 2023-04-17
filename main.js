@@ -1,7 +1,7 @@
 import { Octokit, App } from "https://cdn.skypack.dev/octokit";
 
 const octokit = new Octokit({
-  auth: ,
+  auth:,
 });
 
 // Get fac27 user data and append on page load
@@ -161,7 +161,7 @@ async function requestCommits(repo, location) {
 const followerArr = [];
 const numberOfFollowersArr = [];
 
-async function followers(login){
+async function getFollowers(login){
   const getFollowers = await octokit.request('GET /users/{username}/followers', {
     username: login,
     headers: {
@@ -172,26 +172,23 @@ async function followers(login){
   // console.log(getFollowers.data)
   // getFollowers.data.forEach(repo => console.log(repo.length))
 
-  
-  followerArr.push(getFollowers.data)
-  // console.log(followerArr)
-  
-  
+  const followerData = getFollowers.data
+  followerArr.push(followerData)
 }
+
 
 
 for(const login of fac27Logins){
-followers(login)
+getFollowers(login)
 }
 
-followerArr.forEach(arr => numberOfFollowersArr.push(arr.length));
-console.log(numberOfFollowersArr)
 
+function createQuanitityArr() {
+    followerArr.forEach(arr => numberOfFollowersArr.push(arr.length))
+    console.log(numberOfFollowersArr)
+  }
 
-
-
-
-
+setTimeout(createQuanitityArr, 2000)
 
 
 // Chart.js
@@ -204,7 +201,7 @@ const yValuesLarge = repoSizeArr.filter(value => value >= 9000);
 
 console.log(yValuesLarge)
 
-const barColors = ["red", "green","blue","orange","brown"];
+const barColors = ["#20BF55", "#F52F57","#5448C8","#F3752B","#363635"];
 
 new Chart("repoSizeLarge", {
   type: "bar",
@@ -216,13 +213,6 @@ new Chart("repoSizeLarge", {
       data: yValuesLarge
     }]
   },
-  // options: {
-  //   legend: {display: false},
-  //   title: {
-  //     display: true,
-  //     text: "Largest repo"
-  //   }
-  // }
 });
 
 
@@ -232,39 +222,31 @@ new Chart("repoSizeSmall", {
   data: {
     labels: xValuesSmall,
     datasets: [{
-      label: "Repo sizes",
+      label: "All other repo sizes",
       backgroundColor: barColors,
       data: yValuesSmall
     }]
   },
-  // options: {
-  //   legend: {display: false},
-  //   title: {
-  //     display: true,
-  //     text: "Largest repo"
-  //   }
-  // }
 });
 
-console.log(repoNameArr)
 
+
+function createPie() {
+  console.log(numberOfFollowersArr)
 
 new Chart("follower-chart", {
   type: "pie",
   data: {
-    labels: repoNameArr,
+    labels: fac27Logins,
     datasets: [{
+      label: "Fac27 Followers",
       backgroundColor: barColors,
       data: numberOfFollowersArr
     }]
   },
-  options: {
-    title: {
-      display: true,
-      text: "World Wide Wine Production"
-    }
-  }
 });
 
+}
 
+setTimeout(createPie, 5000)
 
