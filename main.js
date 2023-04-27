@@ -1,7 +1,7 @@
 import { Octokit, App } from "https://cdn.skypack.dev/octokit";
 
 const octokit = new Octokit({
-  auth:,
+  auth:  "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",
 });
 
 // Get fac27 user data and append on page load
